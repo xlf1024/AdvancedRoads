@@ -29,10 +29,11 @@ namespace AdaptiveRoads.UI.QuayRoads {
         private static readonly Dictionary<NetInfo, QuayRoadsPanel> instances_ = new();
 
         private ProfileSection[] Profile {
-            get => netInfo_.GetMetaData().QuayRoadsProfile;
+            get => netInfo_.GetOrCreateMetaData().QuayRoadsProfile;
             set {
-                netInfo_.GetMetaData().QuayRoadsProfile = value;
-                parentPanel_.OnObjectModified();
+                netInfo_.GetOrCreateMetaData().QuayRoadsProfile = value;
+                if (parentPanel_ is not null) parentPanel_.OnObjectModified();
+                else StartCoroutine(AssetEditorRoadUtils.RefreshNetsCoroutine(netInfo_));
             }
         }
         public override void Start() {
@@ -40,7 +41,7 @@ namespace AdaptiveRoads.UI.QuayRoads {
             Caption = "Quay Road Settings for " + netInfo_.name;
             autoSize = true;
 
-            parentPanel_.EventPanelClosed += (_) => Close();
+            if(parentPanel_ is not null) parentPanel_.EventPanelClosed += (_) => Close();
 
             var buttonsPanel = AddUIComponent<UIPanel>();
             buttonsPanel.autoSize = true;

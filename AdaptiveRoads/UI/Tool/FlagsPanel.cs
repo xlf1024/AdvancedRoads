@@ -99,7 +99,7 @@ namespace AdaptiveRoads.UI.Tool {
 
                     lblCaption_.name = "AR_caption";
                 }
-
+                AddQuayRoadsButton(this);
                 if(MultiSegmentMode)
                     AddSegmentFlags(this);
                 else if (SegmentMode)
@@ -175,6 +175,27 @@ namespace AdaptiveRoads.UI.Tool {
             foreach (var flag in mask.ExtractPow2Flags()) {
                 NodeFlagToggle.Add(parent, nodeID_, flag);
             }
+        }
+
+        public void AddQuayRoadsButton(UIPanel parent) {
+
+            Log.Debug("adding QuayRoads button to AR Tool");
+            AssertNotNull(parent, "parent");
+
+            var qrButton = parent.AddUIComponent<UIButtonExt>();
+            qrButton.text = "QuayRoads";
+            qrButton.eventClicked += (_, _) => {
+                OpenQuayRoads();
+            };
+        }
+        public void OpenQuayRoads() {
+            NetInfo info;
+            if (segmentID_ != 0) info = segmentID_.ToSegment().Info;
+            else if (nodeID_ != 0) info = nodeID_.ToNode().Info;
+            else return;
+
+            QuayRoads.QuayRoadsPanel.GetOrOpen(info, null);
+
         }
         protected override void OnPositionChanged() {
             Assertion.AssertStack();

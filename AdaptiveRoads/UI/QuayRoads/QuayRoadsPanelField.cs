@@ -24,6 +24,7 @@ namespace AdaptiveRoads.UI.QuayRoads {
         private readonly FieldInfo fieldInfo_;
         private readonly IConvertible flag_;
         private readonly RoadEditorPanel parentPanel_;
+        private UIPanel parent_;
 
         public QuayRoadsPanelField(NetInfo netInfo, int sectionIndex, FieldInfo fieldInfo, IConvertible flag, UIPanel parent, RoadEditorPanel parentPanel) {
             netInfo_ = netInfo;
@@ -31,6 +32,7 @@ namespace AdaptiveRoads.UI.QuayRoads {
             fieldInfo_ = fieldInfo;
             flag_ = flag;
             parentPanel_ = parentPanel;
+            parent_ = parent;
             if (flag_ is not null) {
 
                 Log.Debug(flag.ToString());
@@ -89,7 +91,8 @@ namespace AdaptiveRoads.UI.QuayRoads {
                 fieldInfo_.SetValue(tmp, value);
                 ProfileSection = (ProfileSection) tmp;
                 Log.Debug(fieldInfo_.Name + " set to " + AssetValue + " should new value: " + value);
-                parentPanel_.OnObjectModified();
+                if (parentPanel_ is not null) parentPanel_.OnObjectModified();
+                else parent_.StartCoroutine(AssetEditorRoadUtils.RefreshNetsCoroutine(netInfo_));
             }
         }
 
